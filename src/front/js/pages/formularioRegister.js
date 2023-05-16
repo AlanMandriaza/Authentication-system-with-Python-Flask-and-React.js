@@ -51,7 +51,7 @@ const FormularioRegister = () => {
           setMessage("Usuario creado exitosamente");
           setStatusError(true);
           setTimeout(() => {
-            navigate("/login");
+            navigate("/");
           }, 2000);
         } else {
           setColor("danger");
@@ -68,7 +68,7 @@ const FormularioRegister = () => {
     <>
       <h1 className="text-center mt-5">Crear cuenta</h1>
       <Container className="d-grid w-50 mb-5 boderFomulario">
-        {statusError && <Alerta color={color} texto={message} />}
+        {statusError && <Alerta color={color} message={message} />}
         <Row>
           <Col>
             <CardBody>
