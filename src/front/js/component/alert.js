@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 const Alerta = (props) => {
     return (
       <Alert color={props.color}>
-        {props.texto}
+        {props.message}
       </Alert>
     );
 }

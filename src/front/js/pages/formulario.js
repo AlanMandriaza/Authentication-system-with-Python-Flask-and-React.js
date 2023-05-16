@@ -1,28 +1,17 @@
-import React from "react";
-import { BASE_URL } from "../Admin/Api";
-import {
-  Container,
-  Row,
-  Col,
-  CardBody,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-} from "reactstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, CardBody, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import Alerta from "../component/alert";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "../../styles/formulario.css";
+import { BASE_URL } from "../Admin/Api";
 
 const Formulario = (props) => {
   const navigate = useNavigate();
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [statusError, setStatusError] = React.useState(false);
-  const [color, setColor] = React.useState("");
-  const [message, setMessage] = React.useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [statusError, setStatusError] = useState(false);
+  const [color, setColor] = useState("");
+  const [message, setMessage] = useState("");
 
   const loginHandler = (ev) => {
     ev.preventDefault();
@@ -46,9 +35,14 @@ const Formulario = (props) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.access_token) {
+        console.log(data);
+        if (data.error) {
+          setColor("danger");
+          setMessage(data.error);
+          setStatusError(true);
+        } else if (data.access_token) {
           setColor("primary");
-          setMessage("Usuario correcto");
+          setMessage(data.message || "Inicio de sesión exitoso");
           setStatusError(true);
           localStorage.setItem("user", username);
           localStorage.setItem("access_token", data.access_token);
@@ -56,13 +50,15 @@ const Formulario = (props) => {
           setTimeout(() => {
             navigate("/private");
           }, 2000);
-        } else {
-          setColor("danger");
-          setMessage("Usuario o contraseña incorrecta");
-          setStatusError(true);
         }
+      })
+      .catch((error) => {
+        setColor("danger");
+        setMessage("Error en el servidor");
+        setStatusError(true);
       });
-  };
+};
+
 
   return (
     <>
@@ -107,7 +103,7 @@ const Formulario = (props) => {
             </CardBody>
           </Col>
         </Row>
-      </Container>
+        </Container>
     </>
   );
 };

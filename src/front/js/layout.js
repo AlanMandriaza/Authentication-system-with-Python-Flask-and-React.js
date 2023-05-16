@@ -16,7 +16,7 @@ const Layout = () => {
         <ScrollToTop>
           <NavBarComponent />
           <Routes>
-            <Route path="/login" element={<Formulario />} />
+            <Route path="/" element={<Formulario />} />
             <Route path="/register" element={<FormularioRegister />} />
             <Route path="/private" element={<PrivateComponent />} />
             <Route path="*" element={<h1>Not found!</h1>} /> // Manejo de ruta no encontrada

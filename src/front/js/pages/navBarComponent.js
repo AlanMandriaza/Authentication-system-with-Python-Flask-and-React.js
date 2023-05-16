@@ -12,24 +12,29 @@ const NavBarComponent = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('access_token');
     // Redirigir al usuario a la página de inicio de sesión
-    navigate('/login');
-  };
-
-  const handlePrivateView = () => {
-    // Aquí deberías implementar la lógica para navegar a la vista privilegiada
-    navigate('/private');
+    navigate('/');
   };
 
   const handleLogin = () => {
     // Redirigir al usuario a la página de inicio de sesión
-    navigate('/login');
+    navigate('/');
+  };
+
+  const handlePrivilegedView = () => {
+    // Redirigir al usuario a la vista privilegiada
+    navigate('/private');
   };
 
   return (
     <div>
       <Navbar color="light" light expand="md">
         <NavbarBrand href="/"></NavbarBrand>
-        <Nav className="mr-auto" navbar>
+        <Nav className="ml-auto" navbar>
+          <NavItem>
+            <Button color="primary" onClick={handlePrivilegedView}>
+              Vista Privilegiada
+            </Button>
+          </NavItem>
           <NavItem>
             <NavLink>{isLoggedIn ? `Email: ${userEmail}` : ''}</NavLink>
           </NavItem>
