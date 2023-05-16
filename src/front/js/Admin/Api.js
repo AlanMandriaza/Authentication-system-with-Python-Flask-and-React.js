@@ -1,5 +1,5 @@
 
-export const BASE_URL = 'https://3001-alanmandria-proyectofin-txnrpqg0ft7.ws-us97.gitpod.io';
+export const BASE_URL = 'https://3001-alanmandria-authenticat-55lmu5q3tzv.ws-us97.gitpod.io';
 
 
 
