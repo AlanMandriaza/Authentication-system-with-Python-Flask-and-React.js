@@ -1,6 +1,7 @@
 import React from "react";
-import {BASE_URL} from "../Admin/Api";
+import { useNavigate } from "react-router-dom";
 
+import { BASE_URL } from "../Admin/Api";
 import {
   Container,
   Row,
@@ -15,117 +16,87 @@ import {
 import Alerta from "../component/alert";
 import "../../styles/formularioRegister.css";
 
-const FormularioRegister = (props) => {
-  console.log("here");
-  const [username, setUsername] = React.useState("");
+const FormularioRegister = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [statusError, setstatusError] = React.useState(false);
+  const [statusError, setStatusError] = React.useState(false);
   const [color, setColor] = React.useState("");
-  const [texto, setTexto] = React.useState("");
+  const [message, setMessage] = React.useState("");
 
-  const loginHandler = (ev) => {
+  const handleRegister = (ev) => {
     ev.preventDefault();
-    if (!username || !password || !firstName || !lastName) {
+
+    if (!email || !password) {
       setColor("danger");
-      setTexto("Debes llenar todos los campos");
-      setstatusError(true);
+      setMessage("Debes llenar todos los campos");
+      setStatusError(true);
       return;
     }
 
-    fetch(
-      `${BASE_URL}/api/users/signup`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: username,
-          password: password,
-          first_name: firstName,
-          last_name: lastName,
-        }),
-      }
-    )
-    
+    fetch(`${BASE_URL}/api/users/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
-        //console.log("RESPONSE from login success ", data);
-        if (data.user) {
-          setColor("primary");
-          setTexto("se creo satisfactoriamente el usuario");
-          setstatusError(true);
-          localStorage.setItem("user", data.user);
-          localStorage.setItem("userId", data.id);
-          window.location.href = "/";
+        if (data.message === "User created successfully") {
+          setColor("success");
+          setMessage("Usuario creado exitosamente");
+          setStatusError(true);
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
         } else {
-          console.log(data);
           setColor("danger");
-          setTexto("Usuario no creado ");
-          setstatusError(true);
+          setMessage("No se pudo crear el usuario");
+          setStatusError(true);
         }
+      })
+      .catch((error) => {
+        console.log(error);
       });
-
-    //console.log(username, password);
   };
 
   return (
     <>
       <h1 className="text-center mt-5">Crear cuenta</h1>
       <Container className="d-grid w-50 mb-5 boderFomulario">
-        {statusError && <Alerta texto={texto} color={color} />}
+        {statusError && <Alerta color={color} texto={message} />}
         <Row>
           <Col>
             <CardBody>
-              <Form onSubmit={loginHandler}>
+              <Form onSubmit={handleRegister}>
                 <FormGroup className="pb-2 mr-sm-2 mb-sm-0">
-                  <Label for="exampleEmail" className="mr-sm-2">
-                    Nombre
-                  </Label>
-                  <Input
-                    type="text"
-                    name="nombre"
-                    id="nombre"
-                    placeholder=""
-                    onChange={(ev) => setFirstName(ev.currentTarget.value)}
-                  />
-                </FormGroup>
-                <FormGroup className="pb-2 mr-sm-2 mb-sm-0">
-                  <Label for="exampleEmail" className="mr-sm-2">
-                    Apellido
-                  </Label>
-                  <Input
-                    type="text"
-                    name="apellido"
-                    id="apellido"
-                    placeholder=""
-                    onChange={(ev) => setLastName(ev.currentTarget.value)}
-                  />
-                </FormGroup>
-                <FormGroup className="pb-2 mr-sm-2 mb-sm-0">
-                  <Label for="exampleEmail" className="mr-sm-2">
-                    Correo electronico
+                  <Label for="email" className="mr-sm-2">
+                    Correo electrónico
                   </Label>
                   <Input
                     type="email"
                     name="email"
-                    id="exampleEmail"
+                    id="email"
                     placeholder=""
-                    onChange={(ev) => setUsername(ev.currentTarget.value)}
+                    value={email}
+                    onChange={(ev) => setEmail(ev.target.value)}
                   />
                 </FormGroup>
                 <FormGroup className="pb-2 mr-sm-2 mb-sm-0">
-                  <Label for="examplePassword" className="mr-sm-2">
+                  <Label for="password" className="mr-sm-2">
                     Contraseña
                   </Label>
                   <Input
                     type="password"
                     name="password"
-                    id="examplePassword"
+                    id="password"
                     placeholder=""
-                    onChange={(ev) => setPassword(ev.currentTarget.value)}
+                    value={password}
+                    onChange={(ev) => setPassword(ev.target.value)}
                   />
                 </FormGroup>
                 <Button type="submit" className="colorBoton mt-3">

@@ -1,5 +1,5 @@
 import React from "react";
-import {BASE_URL} from "../Admin/Api";
+import { BASE_URL } from "../Admin/Api";
 import {
   Container,
   Row,
@@ -12,109 +12,77 @@ import {
   Input,
 } from "reactstrap";
 import Alerta from "../component/alert";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
-
 import "../../styles/formulario.css";
 
 const Formulario = (props) => {
-  console.log("here");
+  const navigate = useNavigate();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [statusError, setstatusError] = React.useState(false);
+  const [statusError, setStatusError] = React.useState(false);
   const [color, setColor] = React.useState("");
-  const [texto, setTexto] = React.useState("");
-
-  const roles = (rol) => {
-    
-    fetch(
-      `${BASE_URL}/api/users/roles/${rol}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    
-      .then((res) => res.json())
-      .then((data) => {
-
-        if (data[0].name) {
-          localStorage.setItem("rol", data[0].name);
-        } else {
-          console.log(data);
-        }
-      });
-  }
+  const [message, setMessage] = React.useState("");
 
   const loginHandler = (ev) => {
     ev.preventDefault();
 
     if (!username || !password) {
       setColor("danger");
-      setTexto("Debes llenar todos los campos");
-      setstatusError(true);
-      return
+      setMessage("Debes llenar todos los campos");
+      setStatusError(true);
+      return;
     }
 
-    fetch(
-      `${BASE_URL}/api/users/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: username,
-          password: password,
-        }),
-      }
-    )
-    
+    fetch(`${BASE_URL}/api/users/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: username,
+        password: password,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
-        console.log("RESPONSE from login success ", data);
-
         if (data.access_token) {
-          roles(data.id)
           setColor("primary");
-          setTexto("usuario correcto");
-          setstatusError(true);
-          localStorage.setItem("user", data.user);
+          setMessage("Usuario correcto");
+          setStatusError(true);
+          localStorage.setItem("user", username);
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("refresh_token", data.refresh_token);
           setTimeout(() => {
-            window.location.href = "/";
+            navigate("/private");
           }, 2000);
         } else {
-          console.log(data);
           setColor("danger");
-          setTexto("Clave o usuario incorrecto");
-          setstatusError(true);
+          setMessage("Usuario o contraseña incorrecta");
+          setStatusError(true);
         }
       });
-
-    // console.log(username, password);
   };
 
   return (
     <>
       <h1 className="text-center mt-5">Ingresar</h1>
       <Container className="d-grid w-50 mb-5 boderFomulario">
-        {statusError && <Alerta texto={texto} color={color} />}
+        {statusError && <Alerta message={message} color={color} />}
         <Row>
           <Col>
             <CardBody>
               <Form onSubmit={loginHandler}>
                 <FormGroup className="pb-2 mr-sm-2 mb-sm-0">
                   <Label for="exampleEmail" className="mr-sm-2">
-                    Correo electronico
+                    Correo electrónico
                   </Label>
                   <Input
                     type="email"
                     name="email"
                     id="exampleEmail"
                     placeholder="ejemplo@ejemplo.com"
-                    onChange={(ev) => setUsername(ev.currentTarget.value)}
+                    onChange={(ev) => setUsername(ev.target.value)}
                   />
                 </FormGroup>
                 <FormGroup className="pb-2 mr-sm-2 mb-sm-0">
@@ -126,13 +94,9 @@ const Formulario = (props) => {
                     name="password"
                     id="examplePassword"
                     placeholder="Contraseña"
-                    onChange={(ev) => setPassword(ev.currentTarget.value)}
+                    onChange={(ev) => setPassword(ev.target.value)}
                   />
                 </FormGroup>
-                <Link className="text-center mt-5" to="/resetToPasword">
-                <p className="text-center mt-3">¿Olvidó su contraseña?</p>
-                </Link>
-                
                 <Button type="submit" className="colorBoton">
                   Ingresar
                 </Button>

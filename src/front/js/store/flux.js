@@ -2,10 +2,7 @@ import { BASE_URL } from "../Admin/Api";
 
 const getState = ({ getStore, setStore }) => {
   const initialState = {
-    carrito: [],
-    productos: [],
-    favorite: [],
-    total: 0,
+   
   };
 
   const getStateFromLocalStorage = () => {
